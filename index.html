@@ -131,18 +131,15 @@ footer .name{color:var(--gold);font-family:var(--display);font-weight:700;font-s
 .in{animation:fadeUp 1.8s cubic-bezier(.22,.8,.25,1) both}
 .d1{animation-delay:.2s}.d2{animation-delay:.5s}.d3{animation-delay:.8s}.d4{animation-delay:1.1s}
 @supports (animation-timeline: view()){
-  .rv{animation:soft linear both;animation-timeline:view();animation-range:cover 0% cover 100%}
+  /* sharpen while entering from below, blur again only while leaving past the top */
+  .rv{animation:rvIn linear both,rvOut linear forwards;animation-timeline:view(),view();animation-range:entry 0% entry 100%,exit 0% exit 100%}
 }
 /* fallback for browsers without scroll timelines: script toggles .vis */
 .rv.js{opacity:.25;filter:blur(9px);transform:translateY(30px);transition:opacity 1.1s ease,filter 1.1s ease,transform 1.1s cubic-bezier(.22,.8,.25,1)}
 .rv.js.vis{opacity:1;filter:none;transform:none}
 @keyframes fadeUp{from{opacity:.15;filter:blur(10px);transform:translateY(18px)}to{opacity:1;filter:none;transform:none}}
-@keyframes soft{
-  0%{opacity:.2;filter:blur(10px);transform:translateY(40px)}
-  28%{opacity:1;filter:none;transform:none}
-  78%{opacity:1;filter:none;transform:none}
-  100%{opacity:.2;filter:blur(10px);transform:translateY(-30px)}
-}
+@keyframes rvIn{from{opacity:.2;filter:blur(10px);transform:translateY(40px)}to{opacity:1;filter:none;transform:none}}
+@keyframes rvOut{from{opacity:1;filter:none;transform:none}to{opacity:.2;filter:blur(10px);transform:translateY(-30px)}}
 
 .tw .ch{opacity:.12;filter:blur(3px);transition:opacity .35s ease,filter .35s ease}
 .tw .ch.on{opacity:1;filter:none}
