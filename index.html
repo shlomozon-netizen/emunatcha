@@ -128,8 +128,9 @@ footer .name{color:var(--gold);font-family:var(--display);font-weight:700;font-s
 .fab .btn-gold{min-height:52px;padding:0 32px;border-radius:999px;font-size:30px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
 
 /* motion: load fade on the first screen; scroll-linked blur in both directions; typewriter headings */
-.in{animation:fadeUp 1.8s cubic-bezier(.22,.8,.25,1) both}
-.d1{animation-delay:.2s}.d2{animation-delay:.5s}.d3{animation-delay:.8s}.d4{animation-delay:1.1s}
+/* first screen plays strictly top to bottom: logo, rabbi, headline (typed), line, kit, buttons */
+.in{animation:fadeUp 1.1s cubic-bezier(.22,.8,.25,1) both}
+.d1{animation-delay:.25s}.d2{animation-delay:1.85s}.d3{animation-delay:2.35s}.d4{animation-delay:3.3s}.d5{animation-delay:3.7s}
 @supports (animation-timeline: view()){
   /* sharpen while entering from below, blur again only while leaving past the top */
   .rv{animation:rvIn linear both,rvOut linear forwards;animation-timeline:view(),view();animation-range:entry 0% entry 100%,exit 0% exit 100%}
@@ -177,11 +178,11 @@ footer .name{color:var(--gold);font-family:var(--display);font-weight:700;font-s
       <span class="bsd in">בס"ד</span>
     </div>
 
-    <h1 class="tw" data-delay="500">תפילין לכל <span class="gold">לוחם</span></h1>
+    <h1 class="tw" data-delay="950">תפילין לכל <span class="gold">לוחם</span></h1>
     <p class="lead in d2">לוחם או פצוע מלחמה שרוצה להניח תפילין מקבל מאיתנו ערכה מלאה ומהודרת.</p>
 
     <div class="kit in d3">
-      <span class="kit-title tw" data-delay="1400">כל לוחם מקבל ערכה אישית</span>
+      <span class="kit-title tw" data-delay="2700">כל לוחם מקבל ערכה אישית</span>
       <div class="tiles">
         <div class="tile"><div class="ph"><img src="img/p_tefillin.webp" alt="תפילין"></div><b>תפילין</b><small>הכי מהודרות</small></div>
         <div class="tile"><div class="ph"><img src="img/p_tallit.webp" alt="טלית צמר"></div><b>טלית צמר</b><small>מהודרת</small></div>
@@ -197,7 +198,7 @@ footer .name{color:var(--gold);font-family:var(--display);font-weight:700;font-s
         אני לוחם ורוצה תפילין
       </a>
     </div>
-    <span class="note in d4">סכום פתוח · סליקה מאובטחת</span>
+    <span class="note in d5">סכום פתוח · סליקה מאובטחת</span>
   </div>
 </section>
 
