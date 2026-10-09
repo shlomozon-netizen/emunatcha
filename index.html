@@ -46,10 +46,10 @@ img{max-width:100%}
 .gold{color:var(--gold)}
 
 /* hero */
-.hero{position:relative;overflow:hidden;isolation:isolate;padding:14px 16px clamp(28px,5vw,64px)}
-.hero-img,.hero-shade{position:absolute;top:0;left:0;right:0;height:min(720px,72%)}
+.hero{position:relative;overflow:hidden;isolation:isolate;padding:14px 16px clamp(14px,3vw,40px)}
+.hero-img,.hero-shade{position:absolute;inset:0}
 .hero-img{background:url(img/soldiers.webp) 60% 32%/cover;animation:drift 40s ease-in-out infinite alternate;z-index:-2}
-.hero-shade{z-index:-1;background:linear-gradient(180deg,rgba(11,19,34,.5) 0%,rgba(11,19,34,.58) 50%,var(--night) 100%)}
+.hero-shade{z-index:-1;background:linear-gradient(180deg,rgba(11,19,34,.5) 0%,rgba(11,19,34,.62) 45%,var(--night) 82%)}
 .hero .wrap{gap:clamp(10px,1.8vw,18px)}
 .top{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:start;gap:8px}
 .logo{justify-self:start;height:clamp(40px,5vw,56px);width:auto;display:block;border-radius:10px;background:var(--cream);padding:3px 8px}
@@ -87,7 +87,7 @@ h1{margin:0 0 -6px;white-space:nowrap;font-family:var(--display);font-weight:700
 .note{font-size:14px;color:var(--muted);display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}
 
 /* band */
-.band{position:relative;overflow:hidden;isolation:isolate;padding:clamp(80px,13vw,160px) 18px}
+.band{position:relative;overflow:hidden;isolation:isolate;padding:clamp(22px,8vw,130px) 18px clamp(56px,11vw,150px)}
 .band::before{content:"";position:absolute;inset:0;z-index:-2;background:url(img/soldiers.webp) center 40%/cover}
 .band::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,var(--night) 0%,rgba(11,19,34,.45) 25%,rgba(11,19,34,.55) 75%,var(--night) 100%)}
 blockquote{max-width:820px;margin:0 auto;text-align:center;font-family:var(--display);font-weight:400;font-size:clamp(38px,6vw,68px);line-height:1.1;text-shadow:0 4px 24px rgba(0,0,0,.55)}
@@ -290,26 +290,46 @@ footer .name{color:var(--gold);font-family:var(--display);font-weight:700;font-s
     el._timer = null;
   });
 
-  function type(el){
-    if (el._typed) return;
-    el._typed = true;
-    var chars = el._chars, i = 0;
-    var speed = +el.getAttribute('data-speed') || 55;
-    var delay = +el.getAttribute('data-delay') || 0;
-    clearTimeout(el._timer);
-    function step(){
+  /* one heading types at a time, in page order (top to bottom).
+     data-delay = earliest start after page load; headings below the first screen
+     wait until the first-screen sequence is finished. */
+  var t0 = Date.now(), INTRO_END = 3900;
+  var queue = [], current = null, waitTimer = null;
+
+  function earliest(el){
+    var d = el.getAttribute('data-delay');
+    return t0 + (d !== null ? +d : INTRO_END);
+  }
+  function enqueue(el){
+    if (el._typed || el === current || queue.indexOf(el) > -1) return;
+    queue.push(el);
+    queue.sort(function(a,b){ return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });
+    run();
+  }
+  function run(){
+    if (current || !queue.length) return;
+    var el = queue[0], wait = earliest(el) - Date.now();
+    clearTimeout(waitTimer);
+    if (wait > 0) { waitTimer = setTimeout(run, wait); return; }
+    queue.shift();
+    current = el; el._typed = true;
+    var chars = el._chars, i = 0, speed = +el.getAttribute('data-speed') || 55;
+    (function step(){
+      if (current !== el) return;
       if (i > 0) chars[i-1].classList.remove('cur');
-      if (i >= chars.length) return;
+      if (i >= chars.length) { current = null; run(); return; }
       chars[i].classList.add('on','cur');
       i++;
       el._timer = setTimeout(step, chars[i-1].textContent === ' ' ? speed * 0.5 : speed);
-    }
-    el._timer = setTimeout(step, delay);
+    })();
   }
+  function type(el){ enqueue(el); }
   function reset(el){
+    var q = queue.indexOf(el);
+    if (q > -1) queue.splice(q, 1);
+    if (current === el) { clearTimeout(el._timer); current = null; run(); }
     if (!el._typed) return;
     el._typed = false;
-    clearTimeout(el._timer);
     for (var k = 0; k < el._chars.length; k++) el._chars[k].classList.remove('on','cur');
   }
 
